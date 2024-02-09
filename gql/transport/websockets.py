@@ -37,7 +37,7 @@ class WebsocketsTransport(WebsocketsTransportBase):
         url: str,
         headers: Optional[HeadersLike] = None,
         ssl: Union[SSLContext, bool] = False,
-        init_payload: Dict[str, Any] = {},
+        init_payload: Optional[Dict[str, Any]] = None,
         connect_timeout: Optional[Union[int, float]] = 10,
         close_timeout: Optional[Union[int, float]] = 10,
         ack_timeout: Optional[Union[int, float]] = 10,
@@ -45,7 +45,7 @@ class WebsocketsTransport(WebsocketsTransportBase):
         ping_interval: Optional[Union[int, float]] = None,
         pong_timeout: Optional[Union[int, float]] = None,
         answer_pings: bool = True,
-        connect_args: Dict[str, Any] = {},
+        connect_args: Optional[Dict[str, Any]] = None,
         subprotocols: Optional[List[Subprotocol]] = None,
     ) -> None:
         """Initialize the transport with the given parameters.
@@ -81,6 +81,8 @@ class WebsocketsTransport(WebsocketsTransportBase):
             backend in the 'subprotocols' http header.
             By default: both apollo and graphql-ws subprotocols.
         """
+        init_payload = {} if init_payload is None else init_payload
+        connect_args = {} if connect_args is None else connect_args
 
         super().__init__(
             url,
