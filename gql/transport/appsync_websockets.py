@@ -39,7 +39,7 @@ class AppSyncWebsocketsTransport(WebsocketsTransportBase):
         close_timeout: int = 10,
         ack_timeout: int = 10,
         keep_alive_timeout: Optional[Union[int, float]] = None,
-        connect_args: Dict[str, Any] = {},
+        connect_args: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Initialize the transport with the given parameters.
 
@@ -60,6 +60,7 @@ class AppSyncWebsocketsTransport(WebsocketsTransportBase):
             a sign of liveness from the server.
         :param connect_args: Other parameters forwarded to websockets.connect
         """
+        connect_args = {} if connect_args is None else connect_args
 
         if not auth:
 

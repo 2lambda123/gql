@@ -92,12 +92,12 @@ class WebsocketsTransportBase(AsyncTransport):
         url: str,
         headers: Optional[HeadersLike] = None,
         ssl: Union[SSLContext, bool] = False,
-        init_payload: Dict[str, Any] = {},
+        init_payload: Optional[Dict[str, Any]] = None,
         connect_timeout: Optional[Union[int, float]] = 10,
         close_timeout: Optional[Union[int, float]] = 10,
         ack_timeout: Optional[Union[int, float]] = 10,
         keep_alive_timeout: Optional[Union[int, float]] = None,
-        connect_args: Dict[str, Any] = {},
+        connect_args: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Initialize the transport with the given parameters.
 
@@ -115,6 +115,8 @@ class WebsocketsTransportBase(AsyncTransport):
             a sign of liveness from the server.
         :param connect_args: Other parameters forwarded to websockets.connect
         """
+        init_payload = {} if init_payload is None else init_payload
+        connect_args = {} if connect_args is None else connect_args
 
         self.url: str = url
         self.headers: Optional[HeadersLike] = headers
