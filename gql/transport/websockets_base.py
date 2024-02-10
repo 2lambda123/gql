@@ -36,12 +36,25 @@ class ListenerQueue:
     """
 
     def __init__(self, query_id: int, send_stop: bool) -> None:
+        """Creates an instance of the class with the given query ID and send stop flag.
+        Parameters:
+            - query_id (int): The ID of the query.
+            - send_stop (bool): Flag indicating whether to send a stop signal.
+        Returns:
+            - None: Does not return anything.
+        Processing Logic:
+            - Initializes instance variables.
+            - Creates an asyncio queue.
+            - Sets the closed flag to False."""
+        
         self.query_id: int = query_id
         self.send_stop: bool = send_stop
         self._queue: asyncio.Queue = asyncio.Queue()
         self._closed: bool = False
 
     async def get(self) -> ParsedAnswer:
+        """"""
+        
 
         try:
             item = self._queue.get_nowait()
@@ -65,11 +78,15 @@ class ListenerQueue:
         return item
 
     async def put(self, item: ParsedAnswer) -> None:
+        """"""
+        
 
         if not self._closed:
             await self._queue.put(item)
 
     async def set_exception(self, exception: Exception) -> None:
+        """"""
+        
 
         # Put the exception in the queue
         await self._queue.put(exception)
@@ -249,12 +266,16 @@ class WebsocketsTransportBase(AsyncTransport):
         document: DocumentNode,
         variable_values: Optional[Dict[str, Any]] = None,
         operation_name: Optional[str] = None,
+        """"""
+        
     ) -> int:
         raise NotImplementedError  # pragma: no cover
 
     @abstractmethod
     def _parse_answer(
         self, answer: str
+        """"""
+        
     ) -> Tuple[str, Optional[int], Optional[ExecutionResult]]:
         raise NotImplementedError  # pragma: no cover
 
@@ -345,6 +366,17 @@ class WebsocketsTransportBase(AsyncTransport):
         answer_type: str,
         answer_id: Optional[int],
         execution_result: Optional[ExecutionResult],
+        """"Handles the answer by putting it in the queue for the specified answer_id, if any. If no one is listening to the answer_id, nothing is done."
+        Parameters:
+            - answer_type (str): The type of answer being handled.
+            - answer_id (int, optional): The ID of the answer being handled. Defaults to None.
+            - execution_result (ExecutionResult, optional): The result of the execution, if applicable. Defaults to None.
+        Returns:
+            - None: This function does not return anything.
+        Processing Logic:
+            - Put answer in queue if answer_id exists.
+            - Do nothing if no one is listening."""
+        
     ) -> None:
 
         try:
@@ -637,6 +669,17 @@ class WebsocketsTransportBase(AsyncTransport):
         log.debug("_close_coro: exiting")
 
     async def _fail(self, e: Exception, clean_close: bool = True) -> None:
+        """This function handles any exceptions that occur during the websocket connection and closes the connection if necessary.
+        Parameters:
+            - e (Exception): The exception that occurred during the websocket connection.
+            - clean_close (bool): Optional parameter to indicate whether the connection should be closed cleanly. Defaults to True.
+        Returns:
+            - None: This function does not return any value.
+        Processing Logic:
+            - Checks if the connection is already closed.
+            - If not, starts a new task to close the connection.
+            - If the connection is already being closed, logs the previous and current exceptions."""
+        
         log.debug("_fail: starting with exception: " + repr(e))
 
         if self.close_task is None:
@@ -656,6 +699,17 @@ class WebsocketsTransportBase(AsyncTransport):
             )
 
     async def close(self) -> None:
+        """Closes the Websocket GraphQL transport.
+        Parameters:
+            - self (WebsocketTransport): The Websocket GraphQL transport object.
+        Returns:
+            - None: This function does not return anything.
+        Processing Logic:
+            - Logs debug message.
+            - Calls _fail() function with TransportClosed exception.
+            - Calls wait_closed() function.
+            - Logs debug message."""
+        
         log.debug("close: starting")
 
         await self._fail(TransportClosed("Websocket GraphQL transport closed by user"))
@@ -664,6 +718,17 @@ class WebsocketsTransportBase(AsyncTransport):
         log.debug("close: done")
 
     async def wait_closed(self) -> None:
+        """Waits for the underlying connection to be closed.
+        Parameters:
+            - self (type): The connection object.
+        Returns:
+            - None: This function does not return anything.
+        Processing Logic:
+            - Waits for the connection to be closed.
+            - Uses a wait object to wait for the connection to be closed.
+            - Logs the start and end of the function.
+            - Uses asynchronous programming to wait for the connection to be closed."""
+        
         log.debug("wait_close: starting")
 
         await self._wait_closed.wait()
