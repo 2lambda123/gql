@@ -156,6 +156,17 @@ class WebsocketsTransport(WebsocketsTransportBase):
         await asyncio.wait_for(self._wait_ack(), self.ack_timeout)
 
     async def _initialize(self):
+        """This function initializes the class and sends an init message, waiting for an acknowledgement before proceeding.
+        Parameters:
+            - self (class): The class to be initialized.
+        Returns:
+            - None: This function does not return anything.
+        Processing Logic:
+            - Initializes the class.
+            - Sends an init message.
+            - Waits for an acknowledgement.
+            - Proceeds once acknowledgement is received."""
+        
         await self._send_init_message_and_wait_ack()
 
     async def send_ping(self, payload: Optional[Any] = None) -> None:
@@ -262,6 +273,17 @@ class WebsocketsTransport(WebsocketsTransportBase):
         return query_id
 
     async def _connection_terminate(self):
+        """Function:
+        Terminates the connection by sending a connection terminate message if the subprotocol is Apollo.
+        Parameters:
+            - self (object): The current object.
+        Returns:
+            - None: No return value.
+        Processing Logic:
+            - Send connection terminate message.
+            - Only if subprotocol is Apollo.
+            - Await for message to be sent."""
+        
         if self.subprotocol == self.APOLLO_SUBPROTOCOL:
             await self._send_connection_terminate_message()
 
@@ -469,6 +491,19 @@ class WebsocketsTransport(WebsocketsTransportBase):
         answer_type: str,
         answer_id: Optional[int],
         execution_result: Optional[ExecutionResult],
+        """Purpose:
+            This function handles answers received from the server and adds them to a queue. It also responds to ping messages for the graphql-ws protocol.
+        Parameters:
+            - answer_type (str): The type of answer received from the server.
+            - answer_id (int, optional): The ID of the answer, if applicable.
+            - execution_result (ExecutionResult, optional): The result of the execution, if applicable.
+        Returns:
+            - None: This function does not return anything.
+        Processing Logic:
+            - Add answer to queue.
+            - Respond to ping messages.
+            - Set flags for ping and pong messages."""
+        
     ) -> None:
 
         # Put the answer in the queue
@@ -484,6 +519,8 @@ class WebsocketsTransport(WebsocketsTransportBase):
             self.pong_received.set()
 
     async def _after_connect(self):
+        """"""
+        
 
         # Find the backend subprotocol returned in the response headers
         response_headers = self.websocket.response_headers
@@ -497,6 +534,8 @@ class WebsocketsTransport(WebsocketsTransportBase):
         log.debug(f"backend subprotocol returned: {self.subprotocol!r}")
 
     async def _after_initialize(self):
+        """"""
+        
 
         # If requested, create a task to send periodic pings to the backend
         if (
@@ -507,6 +546,8 @@ class WebsocketsTransport(WebsocketsTransportBase):
             self.send_ping_task = asyncio.ensure_future(self._send_ping_coro())
 
     async def _close_hook(self):
+        """"""
+        
 
         # Properly shut down the send ping task if enabled
         if self.send_ping_task is not None:

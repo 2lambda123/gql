@@ -143,6 +143,21 @@ class AppSyncWebsocketsTransport(WebsocketsTransportBase):
         document: DocumentNode,
         variable_values: Optional[Dict[str, Any]] = None,
         operation_name: Optional[str] = None,
+        """"Sends a query to the server and returns the query ID.
+        Parameters:
+            - document (DocumentNode): The query document to be sent.
+            - variable_values (Optional[Dict[str, Any]]): The variable values to be used in the query, if applicable.
+            - operation_name (Optional[str]): The name of the operation to be executed, if applicable.
+        Returns:
+            - int: The query ID assigned by the server.
+        Processing Logic:
+            - Increments the next query ID.
+            - Serializes the query data into JSON format.
+            - Creates a message with the query ID, type, and payload.
+            - Adds authorization headers to the payload.
+            - Sends the message to the server.
+        """"
+        
     ) -> int:
 
         query_id = self.next_query_id
